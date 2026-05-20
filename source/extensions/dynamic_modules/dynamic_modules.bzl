@@ -78,7 +78,10 @@ def envoy_dynamic_module_prefix_symbols(name, module_name, archive, tags = [], *
                 "--redefine-syms=$(location :" + redefine_syms_name + ") $$ARCH $@"
             ),
             "//conditions:default": (
-                "$(location @llvm_toolchain_llvm//:objcopy) " +
+                select({
+                    "@envoy_repo//:use_local_llvm": LLVM_PATH + "/bin/llvm-objcopy",
+                    "//conditions:default": "$(location @llvm_toolchain_llvm//:objcopy)",
+                }) + " " +
                 "--redefine-syms=$(location :" + redefine_syms_name + ") $$ARCH $@"
             ),
         }),
